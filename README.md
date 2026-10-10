@@ -26,15 +26,17 @@ Vite prints the development address. For a production bundle, run `npm run build
 
 Switching songs, seeking, or changing modes/hands starts a fresh score. Backgrounding the tab pauses playback. Click Play to resume. Audio requires a user gesture and a browser with Web Audio support. The sound is a local piano-like synthesizer, so no sample downloads are needed.
 
-## Songs and the Runaway reference
+## Songs and the Runaway arrangement
 
-**First Light** and **Paper Planes** are original practice studies included under the MIT license. They are not a transcription of Runaway.
+**Runaway** by Kanye West is the default built-in song, loaded from the user-supplied `src/assets/Runaway_Piano_Transcribed.mid`. Its 1,934 notes, 120 BPM tempo, and approximately 5:38 duration are preserved by the same MIDI parser used for imports. Both hand tracks are explicitly labeled **approximate** in the uploaded file. This app faithfully plays the supplied MIDI; its match to the requested video has not been independently verified. There is no sustain-pedal data in this file.
 
-The requested reference is [this Runaway video](https://www.youtube.com/watch?v=Skzm9zUos00). The user also supplied [the original note-letter guide](https://latouchemusicale.com/en/runaway-piano-notes-letters/). Neither source could be inspected because the cloud runtime's network proxy denied both destinations. **The exact video arrangement is not bundled.** The Runaway card links to that reference and accepts its matching MIDI through the normal importer. A matching creator MIDI, or accessible video footage for transcription, is still needed to implement the exact requested arrangement.
+The [video reference](https://www.youtube.com/watch?v=Skzm9zUos00) and [original note-letter guide](https://latouchemusicale.com/en/runaway-piano-notes-letters/) remain linked in the Runaway card. Neither website could be inspected because the cloud runtime's network proxy denied access. The uploaded MIDI now provides the playable arrangement directly, so no website access is needed to play it.
+
+**First Light** and **Paper Planes** are original practice studies included under the MIT license. All three built-in songs are available after a refresh. The supplied Runaway MIDI is third-party music and is not covered by the project's MIT license; see `src/assets/README.md`.
 
 Import a standard `.mid` or `.midi` file using **Import MIDI**, drag and drop, or the song library. Pitches, durations, chords, and tempo changes are preserved. Hand assignments are inferred from track names/registers and may differ from an arranger's notation. Percussion is excluded; other pitched tracks are played as piano. MIDI sustain-pedal/controller automation is not interpreted. Files must use standard type 0/1 PPQ timing, contain no more than 50,000 notes, and be at most 10 MiB. Audio/YouTube links cannot be automatically converted to reliable MIDI by this app.
 
-Imported music stays in memory in the current browser tab; reimport it after refreshing. There are no uploads, accounts, analytics, or external runtime requests. Extremely wide pitch ranges produce smaller on-screen keys; guided letters still address the selected chord. If a chord has more unique pitches than available guided keys, click the remaining piano keys.
+Additional imported music stays in memory in the current browser tab; reimport it after refreshing. There are no uploads, accounts, analytics, or external runtime requests. Extremely wide pitch ranges produce smaller on-screen keys; guided letters still address the selected chord. If a chord has more unique pitches than available guided keys, click the remaining piano keys.
 
 ## Validate
 
@@ -50,9 +52,10 @@ Unit tests cover MIDI tempo maps, chords, malformed inputs, percussion filtering
 
 - `src/core/engine.ts`: deterministic practice transport and scoring.
 - `src/core/midi.ts`: MIDI validation and import using `@tonejs/midi`.
+- `src/core/songs.ts`: bundled Runaway MIDI and the built-in library.
 - `src/core/demos.ts`: original compositions.
 - `src/core/audio.ts`: local Web Audio synthesis.
 - `src/components/PianoRoll.tsx`: falling notes and pointer piano.
 - `src/App.tsx`: keyboard input, library, transport, and controls.
 
-Licensed under MIT. Lumina is independent and is not affiliated with Synthesia. The software license covers the code and original studies; imported music retains its own license.
+Licensed under MIT. Lumina is independent and is not affiliated with Synthesia. The software license covers the code and original studies; the supplied Runaway MIDI and other imported music retain their own rights and are not licensed under the project’s MIT license.

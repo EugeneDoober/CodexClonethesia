@@ -42,6 +42,40 @@ async function uploadMidi(page: Page, chord = false): Promise<void> {
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Find your flow.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Choose a song', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: /First Light/ }).click();
+  await expect(page.getByRole('region', { name: 'Current song' }).getByRole('heading')).toContainText('First Light');
+});
+
+test('opens the provided Runaway transcription by default and teaches its actual first chord', async ({ page }) => {
+  // Revisit the app to test its default state, independent of demo-based cases.
+  await page.goto('/');
+  const currentSong = page.getByRole('region', { name: 'Current song' });
+  await expect(currentSong.getByRole('heading')).toContainText('Runaway');
+  await expect(currentSong).toContainText('Kanye West');
+  await expect(currentSong).toContainText('Piano transcription');
+  expect(Number(await position(page).getAttribute('max'))).toBeCloseTo(338.363636, 2);
+
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
+  await expect(page.locator('.learning-status')).toContainText('Your turn · E5 + E6');
+  expect(await readPosition(page)).toBeCloseTo(1.76, 2);
+  await page.keyboard.press(await keyFor(page, 'E5'));
+  await expect(page.locator('.learning-status')).toContainText('Your turn · E6');
+  await page.waitForTimeout(200);
+  expect(await readPosition(page)).toBeCloseTo(1.76, 2);
+  await page.keyboard.press(await keyFor(page, 'E6'));
+  await expect.poll(() => readPosition(page)).toBeGreaterThan(1.8);
+  await expect(page.locator('.accuracy strong')).toHaveText('100%');
+
+  await page.getByRole('button', { name: 'Choose a song', exact: true }).click();
+  const library = page.getByRole('dialog');
+  await expect(library.getByRole('button', { name: /Runaway/ })).toBeVisible();
+  await library.getByRole('button', { name: /First Light/ }).click();
+  await expect(currentSong.getByRole('heading')).toContainText('First Light');
+  await page.getByRole('button', { name: 'Choose a song', exact: true }).click();
+  await library.getByRole('button', { name: /Runaway/ }).click();
+  await expect(currentSong.getByRole('heading')).toContainText('Runaway');
+  await expect(position(page)).toHaveValue('0');
 });
 
 test('Learn waits for the correct computer key, then advances the music', async ({ page }) => {
